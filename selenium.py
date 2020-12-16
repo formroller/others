@@ -12,9 +12,18 @@ driver = webdriver.Chrome(chromedriver)
 driver.get('https://www.data.go.kr/tcs/dss/selectDataSetList.do?dType=FILE&keyword=&detailKeyword=&publicDataPk=&recmSe=N&detailText=&relatedKeyword=&commaNotInData=&commaAndData=&commaOrData=&must_not=&tabId=&dataSetCoreTf=&publicDataPks=&coreDataNm=&sort=&relRadio=&orgFullName=&orgFilter=&org=&orgSearch=&currentPage=1&perPage=40&brm=%EB%B3%B4%EA%B1%B4%EC%9D%98%EB%A3%8C&instt=&svcType=&kwrdArray=&extsn=&coreDataNmArray=')
 
 
-element = driver.find_elements_by_css_selector(' dl > dt > a > span.title')
+title = driver.find_elements_by_css_selector(' dl > dt > a > span.title')
+date = driver.find_elements_by_css_selector(' span.data')
 
+titles = []
+for t in titles:
+    titles.append(t.text)
+    
 
-title = []
-for e in element:
-    title.append(e.text)
+dates=[]
+for d in date:
+    dates.append(d.text)
+    if len(dates) >=4:
+        dates.append(d.text)
+    else:
+        pass
