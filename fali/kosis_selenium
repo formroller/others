@@ -1,0 +1,77 @@
+import os
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from bs4 import BeautifulSoup
+import requests 
+import time
+
+import re
+
+import pandas as pd
+import numpy as np
+import csv
+
+
+response = requests.get('https://kosis.kr/statisticsList/statisticsListIndex.do?menuId=M_01_01&vwcd=MT_ZTITLE&parmTabId=M_01_01#SelectStatsBoxDiv', timeout=2)
+print(response)
+
+response.close()
+
+
+
+    
+    chromedriver='./chromedriver.exe'
+    driver=webdriver.Chrome(chromedriver)
+
+    driver.get('https://kosis.kr/statisticsList/statisticsListIndex.do?menuId=M_01_01&vwcd=MT_ZTITLE&parmTabId=M_01_01#SelectStatsBoxDiv')
+    driver.find_element_by_css_selector('#F\.1 > a').click() # 보건 click
+    
+    ## word_list에 해당하는 컬럼 click
+    word_list=['건강','보험','환자','의료','보건','진료','사망','생명','아동','암','의약','출산','질환','정신']
+    medic_column = driver.find_elements_by_css_selector('#statis_list > ul li')[5].text.split('\n') # 보건 항목중 word_list가 포함된 항목.
+    
+    
+    medic_category=[]
+    for word in word_list:
+        for me in medic_column:
+            if word in me:
+                medic_category.append(me)
+            else:
+                pass
+    
+    ## 관심항목 click    
+    for i in medic_column:
+        for j in medic_category:
+            if driver.find_elements_by_partial_link_text(i) == driver.find_elements_by_partial_link_text(j):
+                driver.find_elements_by_partial_link_text(i)[0].click()
+                time.sleep(1)                    
+            else:
+                pass
+
+    
+
+click_category()
+
+response.close()
+
+# 중분류 -> 소분류(file) parsing
+for i in medic_category
+middle = driver.find_element_by_css_selector('')
+
+asd = [i.text for i in driver.find_elements_by_tag_name('li')]
+driver.quit()
+# soup
+
+driver.quit()   # chrome not reachable시 driver종료
+
+
+
+for i in medic_column:
+    if driver.find_elements_by_partial_link_text(i) == medic_category:
+        driver.find_elements_by_partial_link_text(i)[0].click()
+        time.sleep(1)
+                    
+    else:
+        pass
+    
+#F_8\.2 > a
