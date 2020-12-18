@@ -1,0 +1,65 @@
+import os
+
+import pandas as pd
+import numpy as np
+
+import seaborn as sns
+
+import re
+import csv
+os.chdir('./medical')
+Public = pd.read_csv('./medical/PublicData.csv', encoding='cp949')
+
+Public.columns = ['data','names','provide','date','form']
+Public.head()
+
+## 파일명 첫 요소 추출
+Public['names'] = [i.replace('_',' ') for i in Public['names']]
+Public['loc'] = [i.split(' ')[0] for i in name_one]
+
+print(Public['loc'])
+
+## 도시군구읍면동 추출
+Public['loc']
+Public['loc'] = Public['loc'].str.replace('[한국].+','')
+Public['loc'] = Public['loc'].str.replace('[보훈].+','')
+Public['loc'] = Public['loc'].str.replace('[보건].+','')
+Public['loc'] = Public['loc'].str.replace('[병].+','')
+Public['loc'] = Public['loc'].str.replace('[질병].+','')
+Public['loc'] = Public['loc'].str.replace('[근].+','')
+
+
+
+
+Public.to_csv('./Public2.csv', encoding='cp949')
+
+# =============================================================================
+# Public2.csv
+# =============================================================================
+Public = pd.read_csv('./Public2.csv', encoding='cp949', index_col=0)
+
+# p = re.compile(r'.[시구군]') third_loc불가 ->list는 str 불가
+
+## ' '기준 split 3번째 요소 추출
+# 단어 길이가 3개 이하인 요소 ' '처리
+second_loc=[]
+third_loc=[]
+for i in range(len(Public)):
+    second_loc = Public['names'][i].split(' ')
+    if len(second_loc) >= 3:
+        third_loc.append(second_loc)
+    else:
+
+        third_loc.append(' ')
+
+## 주 정보가 3번째에 있어 파일명[2] 긁어옴
+# 긁어온 파일명중 빈칸 제외한 부분 info에 입력
+info=[]
+for i in range(len(Public)):
+    if ' ' not in third_loc[i]:
+        info.append(third_loc[i][2])
+    elif len(third_loc[i]) <= 2:
+        info.append(' ')
+
+info = [third_loc[i][2]  for i in range(len(third_loc)) if ' ' not in third_loc[i]]
+Public['info'] = info
