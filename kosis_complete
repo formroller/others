@@ -1,0 +1,90 @@
+import selenium
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import requests
+from bs4 import BeautifulSoup
+import time
+import re
+
+import pandas as pd
+import numpy as np
+
+import csv
+
+
+chromedriver = ('./chromedriver.exe')
+driver = webdriver.Chrome(chromedriver)
+driver.get('https://kosis.kr/statisticsList/statisticsListIndex.do?menuId=M_01_01&vwcd=MT_ZTITLE&parmTabId=M_01_01#SelectStatsBoxDiv')
+
+
+driver.find_element_by_xpath('//*[@id="F.1"]/a').click()
+
+# 보건 항목내 카테고리 추출
+
+category = driver.find_elements_by_css_selector('#statis_list > ul li ')[5].text.split('\n')
+category = (category[1:])
+
+# ul li (보건 -> 하위 카테고리 선택되는지 시도)
+#driver.find_elements_by_css_selector('#statis_list > ul li ')[5].text
+
+#parent_elem = driver.find_elements_by_xpath('//*[@id="F.1"]')
+#print(parent_elem)
+
+cate=[]
+for i in category:
+    cate.append(driver.find_elements_by_link_text(f'{i}'))
+
+print(cate)
+
+
+for i in cate:
+    i[0].click()
+    time.sleep(0.5)
+    
+    
+small_elements = driver.find_elements_by_tag_name('#F\.1 > ul')
+smalls=[]
+for s in small_elements:
+    smalls.append(s.text)
+#     smalls = np.array(smalls[0].split('\n'))
+
+smallest=[]
+for i in range(len(smalls)):
+    smallest.append(smalls[i].split('년')[0])
+print(smallest)
+
+smalls[2].split(' ')[-1]
+
+
+year = []
+for i in range(len(smalls)):
+    print(smalls[i].split(' ')[-1])
+    
+# # 실패!
+# year=[]
+# years=[]
+# for i in range(0,len(smalls)):
+#     if '수록기간' in smalls[i]:
+#         year.append(smalls[i].split('수록기간')[-1])
+        
+
+ # 년도 추출
+# years[209] -> '20위'글자
+year=[]
+years=[]
+for i in range(len(smalls)):
+    year.append(smalls[i].split(' ')[-1])
+    if year[i].startswith('2') or year[i].startswith('1'):
+        years.append(year[i])
+    else:
+       years.append('NULL')
+
+years[209] = 'NULL'
+print(year)
+years
+
+results = {'파일명':smallest , '수록년도':year}
+result = pd.DataFrame(results)
+
+result.to_csv('./kosis.csv')
+
