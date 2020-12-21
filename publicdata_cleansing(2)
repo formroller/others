@@ -1,4 +1,5 @@
 import os
+os.getcwd()
 os.chdir('./medical')
 
 import pandas as pd
@@ -7,8 +8,6 @@ import numpy as np
 import re
 import csv
 
-public = pd.read_csv('PublicData.csv', encoding='cp949')
-public.columns = ['type','fname', 'provide', 'date','form']
 
 # =============================================================================
 # # Data Split
@@ -21,6 +20,10 @@ public.columns = ['type','fname', 'provide', 'date','form']
 
 # =>['loc_info'] + [info]
 # =>['loc_detail] + [detail]
+
+public = pd.read_csv('PublicData.csv', encoding='cp949')
+public.columns = ['type','fname', 'provide', 'date','form']
+
 
 public['fname'] = [i.replace('_',' ') for i in public['fname']]
 public['splits']= [i.split(' ')[0] for i in public['fname']]
@@ -113,13 +116,13 @@ for i in range(len(public)):
         loc_detail.append('')
     else:
         loc_detail.append(loc_part2[i].split(' ')[2:])
-public['loc_detail'] = loc_detail
-        
+# public['loc_detail'] = loc_detail
+            
 ## stpe3) 기관별로 분리
 ## fname  - part
-df['part'],기관명
-df['info'],기관 하위 항목
-df['detail'], 기관명 상세 설명
+# df['part'],기관명
+# df['info'],기관 하위 항목
+# df['detail'], 기관명 상세 설명
         
 
 
@@ -133,17 +136,15 @@ sub_part = pd.Series(part2, index = a_1)
 sub_part.fillna('0', inplace = True)
 
 info = []
-detail =[]
 for i in range(len(public)):
     if(len(sub_part[i].split(' '))) <=2:
         info.append('')
-        detail.append('')
     else:
         info.append(sub_part[i].split(' ')[1])
-        detail.append(sub_part[i].split(' ')[2:])
     
 
 public['info']=info
+
 
 ## public 하위 항목 설명
 explain=[]
@@ -158,10 +159,10 @@ public['explain'] = explain
 
 # splits, split_2 삭제
 public.drop(['splits','split_2'], axis = 1, inplace = True)
+public.head()
+
 
 # to_csv
 public.to_csv('public_12_21.csv', encoding='cp949')
-
-
 
 
