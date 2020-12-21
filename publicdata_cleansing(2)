@@ -144,7 +144,17 @@ for i in range(len(public)):
     
 
 public['info']=info
-public['detail']=detail
+
+## public 하위 항목 설명
+explain=[]
+for i in range(len(public)):
+    if len(public['fname'][i].split(' ')) <=2:
+        explain.append('')
+    else:
+        explain.append(public['fname'][i].split(' ')[2:])
+
+public['explain'] = explain
+
 
 # splits, split_2 삭제
 public.drop(['splits','split_2'], axis = 1, inplace = True)
@@ -152,6 +162,6 @@ public.drop(['splits','split_2'], axis = 1, inplace = True)
 # to_csv
 public.to_csv('public_12_21.csv', encoding='cp949')
 
-public.head(10)
+
 
 
