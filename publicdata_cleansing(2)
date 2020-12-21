@@ -1,0 +1,57 @@
+fname split -> 지역명, 기관명 분리
+
+import pandas as pd
+import numpy as np
+
+import re 
+import csv
+
+public = pd.read_csv('PublicData.csv',encoding = 'cp949', index_col=0)
+public2 = pd.read_csv('Public2.csv', encoding = 'cp949', index_col=0)
+public.columns = ['fname', 'provide', 'date','form']
+
+# 할 일. (Public data)
+## df['loc(지역명)'], df['기관명'], df['분류']
+
+## 1.fname - location 지역명 분리
+public.head()
+
+public['fname'] = [i.replace('_',' ') for i in public['fname']]
+public['split']= [i.split(' ')[0] for i in public['fname']]
+public['split'].value_counts()
+
+# 첫번째 split(지역)
+p = re.compile(r'.+[시|도]')
+public['first']= public['split'].str.findall(p).astype('str')
+
+public['first']= public['first'].str.replace('\'','')
+public['first']= public['first'].str.replace('[','')
+public['first'] = public['first'].str.replace(']','')
+public['first'].value_counts()
+
+# first 지역 외 제거
+public.loc[public['first']=='서을특별시']='서울특별시'
+public.loc[public['first']=='한국보건의료인국가시']=''
+public.loc[public['first']=='보건의료인국가시']=''
+public.loc[public['first']=='소독의무시']=''
+public.loc[public['first']=='소독의무대상시']=''
+public.loc[public['first']=='정도']=''
+public.loc[public['first']=='2017년도']=''
+public.loc[public['first']=='안마시']=''
+public.loc[public['first']=='의료기기판매(임대)업(수시']=''
+public.loc[public['first']=='사회복지시']=''
+
+# 시, 도 이름 통합
+public.loc[public['first']=='서을특별시']='서울특별시'
+public.loc[public['first']=='서울시']='서울특별시'
+public.loc[public['first']=='부산시']='부산광역시'
+public.loc[public['first']=='인천시']='인천광역시'
+public.loc[public['first']=='세종특별자치시시']='세종특별자치시'
+
+public.rename(columns = {'first':'location'}, inplace=True)
+
+public['location'].value_counts()
+
+## fname  - part,  기관명 추출
+
+second = [i.split(' ')[0] for i in public['fname']]
