@@ -55,3 +55,5 @@ public['location'].value_counts()
 ## fname  - part,  기관명 추출
 
 second = [i.split(' ')[0] for i in public['fname']]
+public['part'] = public['split'].loc[public['location'] != second]
+public['part'].value_counts()
