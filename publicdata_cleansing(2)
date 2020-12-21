@@ -51,11 +51,11 @@ public.loc[public['first']=='의료기기판매(임대)업(수시']=''
 public.loc[public['first']=='사회복지시']=''
 
 # 시, 도 이름 통합
-public.loc[public['first']=='서을특별시']='서울특별시'
-public.loc[public['first']=='서울시']='서울특별시'
-public.loc[public['first']=='부산시']='부산광역시'
-public.loc[public['first']=='인천시']='인천광역시'
-public.loc[public['first']=='세종특별자치시시']='세종특별자치시'
+public.replace('서을시','서울특별시',inplace=True)
+public.replace('부산시','부산광역시',inplace=True)
+public.replace('인천시','인천광역시',inplace=True)
+public.replace('세종특별자치시시','세종특별자치시',inplace=True)
+
 
 # first -> location 컬럼명 변경
 public.rename(columns = {'first':'location'}, inplace=True)
