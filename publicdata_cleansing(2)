@@ -52,6 +52,30 @@ public.rename(columns = {'first':'location'}, inplace=True)
 
 public['location'].value_counts()
 
+# 시/군/구 추출
+b=[]
+for i in range(len(a)):
+    if a[i].endswith('시'):
+        b.append(a[i])
+    elif a[i].endswith('군'):
+        b.append(a[i])
+    elif a[i].endswith('구'):
+        b.append(a[i])
+    else:
+        b.append('')
+public['sub_loc'] = b
+
+public['sub_loc'].unique()
+
+public.loc[public['sub_loc']=='현금급여비(장애구']= ''
+public.loc[public['sub_loc']=='의료용구']=''
+public.loc[public['sub_loc']=='구군']=''
+public.loc[public['sub_loc']=='표본감시']=''
+public.loc[public['sub_loc']=='보조기구']=''
+public.loc[public['sub_loc']=='복지용구']=''
+public.loc[public['sub_loc']=='수시']=''
+
+
 ## fname  - part,  기관명 추출
 
 second = [i.split(' ')[0] for i in public['fname']]
