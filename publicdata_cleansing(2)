@@ -7,6 +7,17 @@ import csv
 
 os.chdir('C:\\Users\\BIOJEAN\\medical')
 
+# Data Split
+
+## 1.fname - location
+df['location'], 시/도
+df['sub_loc'], 군/구
+df['loc_info], 지역에 따른 대략적 설명
+df['detail_info], 지역 상세 설명
+
+=>['loc_info'] + [info]
+=>['loc_detail] _ [detail]
+
 public = pd.read_csv('PublicData.csv',encoding = 'cp949', index_col=0)
 public2 = pd.read_csv('Public2.csv', encoding = 'cp949', index_col=0)
 public.columns = ['fname', 'provide', 'date','form']
@@ -76,16 +87,41 @@ public.loc[public['sub_loc']=='보조기구']=''
 public.loc[public['sub_loc']=='복지용구']=''
 public.loc[public['sub_loc']=='수시']=''
 
+## fname -> loc (info, detail) 
 
-## fname  - part,  기관명 추출
+len(loc_part[1].split(' ')) <= 3
 
+loc_info = []
+loc_detail =[]
+for i in range(len(public)):
+    if(len(loc_part2[i].split(' '))) <=2:
+        loc_info.append('')
+        loc_detail.append('')
+    else:
+        loc_info.append(loc_part2[i].split(' ')[1])
+        loc_detail.append(loc_part2[i].split(' ')[2:])
+        
+        
+## fname  - part
+df['part'],기관명
+df['info'],기관 하위 항목
+df['detail'], 기관명 상세 설명
+
+# 기관명만 추출
 second = [i.split(' ')[0] for i in public['fname']]
-public['part'] = public['split'].loc[public['location'] != second]
+public['part'] = public['splits'].loc[public['location'] != second]
 public['part'].value_counts()
+
+# fname - loc 기관명 추출
+loc_part = public['fname'].loc[public['location'] == second]
+a_2 = np.arange(0,2165)
+loc_part2 = pd.Series(loc_part, index=a_2)
+loc_part2.fillna('0',inplace=True)
+
 
 # 기관명 있는 index만 선택해 split
 part2 = public['fname'].loc[public['location'] != second]
-a_1 = np.arange(0, 2164)
+a_1 = np.arange(0, 2165)
 sub_part = pd.Series(part2, index = a_1)
 
 
