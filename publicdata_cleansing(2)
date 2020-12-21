@@ -39,16 +39,18 @@ public['first'] = public['first'].str.replace(']','')
 public['first'].value_counts()
 
 # first 지역 외 제거
-public.loc[public['first']=='서을특별시']='서울특별시'
-public.loc[public['first']=='한국보건의료인국가시']=''
-public.loc[public['first']=='보건의료인국가시']=''
-public.loc[public['first']=='소독의무시']=''
-public.loc[public['first']=='소독의무대상시']=''
-public.loc[public['first']=='정도']=''
-public.loc[public['first']=='2017년도']=''
-public.loc[public['first']=='안마시']=''
-public.loc[public['first']=='의료기기판매(임대)업(수시']=''
-public.loc[public['first']=='사회복지시']=''
+
+
+public['first'].replace('한국보건의료인국가시','',inplace=True)
+public['first'].replace('보건의료인국가시','',inplace=True)
+public['first'].replace('소독의무시','',inplace=True)
+public['first'].replace('소독의무대상시','',inplace=True)
+public['first'].replace('정도','',inplace=True)
+public['first'].replace('2017년도','',inplace=True)
+public['first'].replace('안마시','',inplace=True)
+public['first'].replace('의료기기판매(임대)업(수시','',inplace=True)
+public['first'].replace('사회복지시','',inplace=True)
+
 
 # 시, 도 이름 통합
 public.replace('서을시','서울특별시',inplace=True)
@@ -91,13 +93,15 @@ public['sub_loc'] = b
 # 변수명 확인
 public['sub_loc'].unique()
 
-public.loc[public['sub_loc']=='현금급여비(장애구']= ''
-public.loc[public['sub_loc']=='의료용구']=''
-public.loc[public['sub_loc']=='구군']=''
-public.loc[public['sub_loc']=='표본감시']=''
-public.loc[public['sub_loc']=='보조기구']=''
-public.loc[public['sub_loc']=='복지용구']=''
-public.loc[public['sub_loc']=='수시']=''
+public.sub_loc.replace('현금급여비(장애구','',inplace=True)
+public.sub_loc.replace('의료용구','',inplace=True)
+public.sub_loc.replace('구군','',inplace=True)
+public.sub_loc.replace('표본감시','',inplace=True)
+public.sub_loc.replace('보조기구','',inplace=True)
+public.sub_loc.replace('복지용구','',inplace=True)
+public.sub_loc.replace('수시','',inplace=True)
+
+
 
 ## fname -> loc(info, detail)
 # fname - loc 기관명 추출
@@ -109,7 +113,7 @@ loc_part2 = pd.Series(loc_part, index=a_2)
 loc_part2.fillna('0',inplace=True)
 public.head(30)
 
-loc_info = []
+
 loc_detail =[]
 for i in range(len(public)):
     if(len(loc_part2[i].split(' '))) <=2:
