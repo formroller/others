@@ -1,10 +1,11 @@
-fname split -> 지역명, 기관명 분리
-
+import os
 import pandas as pd
 import numpy as np
 
 import re 
 import csv
+
+os.chdir('C:\\Users\\BIOJEAN\\medical')
 
 public = pd.read_csv('PublicData.csv',encoding = 'cp949', index_col=0)
 public2 = pd.read_csv('Public2.csv', encoding = 'cp949', index_col=0)
@@ -81,3 +82,35 @@ public.loc[public['sub_loc']=='수시']=''
 second = [i.split(' ')[0] for i in public['fname']]
 public['part'] = public['split'].loc[public['location'] != second]
 public['part'].value_counts()
+
+# 기관명 있는 index만 선택해 split
+part2 = public['fname'].loc[public['location'] != second]
+a_1 = np.arange(0, 2164)
+sub_part = pd.Series(part2, index = a_1)
+
+
+## sub_part, 기관명 하위 항목 설명
+sub_part.fillna('0', inplace = True)
+
+info = []
+detail =[]
+for i in range(len(public)):
+    if(len(sub_part[i].split(' '))) <=2:
+        info.append('')
+        detail.append('')
+    else:
+        info.append(sub_part[i].split(' ')[1])
+        detail.append(sub_part[i].split(' ')[2:])
+        
+public['info']=info
+public['detail']=detail
+
+public.to_csv('public_12_21.csv', encoding='cp949')
+
+# splits, split_2 삭제
+public.drop(['splits','split_2'], axis = 1, inplace = True)
+
+
+
+cleansing_12_21.ipynb
+
