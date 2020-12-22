@@ -1,6 +1,5 @@
-import os
-os.getcwd()
-os.chdir('./medical')
+import os 
+os.chdir('C:/Users/BIOJEAN/medical')
 
 import pandas as pd
 import numpy as np
@@ -53,7 +52,7 @@ public['first'].replace('사회복지시','',inplace=True)
 
 
 # 시, 도 이름 통합
-public.replace('서을시','서울특별시',inplace=True)
+public.replace('서을특별시','서울특별시',inplace=True)
 public.replace('부산시','부산광역시',inplace=True)
 public.replace('인천시','인천광역시',inplace=True)
 public.replace('세종특별자치시시','세종특별자치시',inplace=True)
@@ -165,10 +164,9 @@ for i in range(len(public)):
         explain.append('')
     else:
         explain.append(public['fname'][i].split(' ')[3:])
-        explain.join
+        
 
  
-public['explain'] = list(map(lambda x : ''.join(x), explain]))
 
 public['category'] = category
 public['explain'] = explain
