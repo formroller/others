@@ -165,14 +165,16 @@ for i in range(len(public)):
         explain.append('')
     else:
         explain.append(public['fname'][i].split(' ')[3:])
+        explain.join
+
+ 
+public['explain'] = list(map(lambda x : ''.join(x), explain]))
+
 public['category'] = category
 public['explain'] = explain
 
-
+public.columns
 # splits, split_2 삭제
 public.drop(['splits','split_2'], axis = 1, inplace = True)
-public.head()
-public.category
-
 # to_csv
-public.to_csv('public_12_21.csv', encoding='cp949')
+public.to_csv('public.csv', encoding='cp949')
