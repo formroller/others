@@ -150,23 +150,29 @@ for i in range(len(public)):
 public['info']=info
 
 
+category = []
+for i in range(len(public)):
+    if len(public['fname'][i].split(' '))<= 2:
+        category.append(' ')
+    else:
+        category.append(public['fname'][i].split(' ')[2])
+
+
 ## public 하위 항목 설명
 explain=[]
 for i in range(len(public)):
     if len(public['fname'][i].split(' ')) <=2:
         explain.append('')
     else:
-        explain.append(public['fname'][i].split(' ')[2:])
-
+        explain.append(public['fname'][i].split(' ')[3:])
+public['category'] = category
 public['explain'] = explain
 
 
 # splits, split_2 삭제
 public.drop(['splits','split_2'], axis = 1, inplace = True)
 public.head()
-
+public.category
 
 # to_csv
 public.to_csv('public_12_21.csv', encoding='cp949')
-
-
