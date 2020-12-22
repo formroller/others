@@ -1,0 +1,16 @@
+import os
+os.chdir('C:/Users/BIOJEAN/medical')
+
+import pandas as pd
+import pandas_profiling
+# pip install -U pandas_profiling, Overview가능
+import numpy as np
+
+from pyarrow import csv # 기존pd.read_csv보다 빠르다
+import csv
+
+
+df = pd.read_csv('portal.csv', encoding='cp949', index_col=0)
+
+profile=df.profile_report()
+
