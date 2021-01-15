@@ -106,4 +106,3 @@ portal = {'제목':new_titles, '제공기관':new_labels,'설명':new_desc, '파
 df = pd.DataFrame(portal)
 df.to_csv('C:/Users/BIOJEAN/medical/new_portal2.csv')
 
-len(PublicDataPotal)
