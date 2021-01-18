@@ -1,0 +1,61 @@
+import pandas as pd
+import numpy as np
+
+from sklearn.preprocessing import LabelEncoder
+
+df =pd.read_csv('C:/Users/BIOJEAN/Desktop/이용준/test.csv', encoding='cp949',index_col=0)
+
+df['대분류'].value_counts()[:5]
+df['대분류'].groupby(df['중분류']).count()
+
+df['하위지역'],df['지역']
+df['하위지역']
+
+le = LabelEncoder()
+le.fit(df['대분류'])
+label = le.transform(df['대분류'])
+pd.get_dummies(df['대분류'])
+## 범주형 데이터와 고워 거리
+
+# =============================================================================
+# ## wordcloud
+# =============================================================================
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+from matplotlib import font_manager
+
+font_fname = 'C:/Windows/Fonts/NanumGothic.ttf'
+
+
+# 한글을 출력하려면 font-path에 폰트 설정 필요
+
+
+wordcloud = WordCloud(
+    font_path="C:/WINDOWS/Fonts/HANCOM GOTHIC REGULAR.TTF",
+    width = 800,
+    height=800)
+
+# 워드 클라우드로 출력할 단어는 공백으로 분리된 문자열을 만들어야 한다.
+text = ' '.join(df['중분류'])
+
+# generate 함수를 이용해 워드 클라우드 출력
+keyword = wordcloud.generate(text)
+array = keyword.to_array()
+
+plt.figure(figsize=(10,18))
+plt.imshow(array,
+           interpolation="bilinear"
+           )
+plt.axis('off')
+plt.show()
+
+# [참고]
+# wordcloud, https://junglow9.tistory.com/12?category=932367
+# =============================================================================
+# 범주형 데이터
+# =============================================================================
+import seaborn as sns
+import missingno as msno
+
+df.groupby(['지역','대분류']).count().idxmax()
+df.groupby('지역')['대분류'].count().idxmax()
