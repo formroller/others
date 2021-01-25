@@ -4,7 +4,7 @@ import numpy as np
 import re
 import csv
 
-public = pd.read_csv('C:/Users/BIOJEAN/medical/new_portal2.csv', encoding='utf-8',index_col=0)
+public = pd.read_csv('C:/Users/BIOJEAN/medical/new_portal2.csv', encoding='utf-8-sig',index_col=0)
 # {'제목','제공기관','설명', '파일형태','제공형태','수정일'}
 
 public.columns = ['fname', 'provide','explain','type','date','form']
@@ -39,12 +39,12 @@ public['first'].replace('의료기기판매(임대)업(수시','',inplace=True)
 public['first'].replace('사회복지시','',inplace=True)
 
 # 시, 도 이름 통합
-public.replace('서을특별시','서울특별시',inplace=True)
-public.replace('부산시','부산광역시',inplace=True)
-public.replace('인천시','인천광역시',inplace=True)
-public.replace('대구','인천광역시',inplace=True)
-public['fname'][2168] = public['fname'][2168].replace('대구','대구광역시')
-public.replace('세종특별자치시시','세종특별자치시',inplace=True)
+public['first'].replace('서을특별시','서울특별시',inplace=True)
+public['first'].replace('부산시','부산광역시',inplace=True)
+public['first'].replace('인천시','인천광역시',inplace=True)
+public['first'].replace('대구','인천광역시',inplace=True)
+# public['fname'][2168] = public['fname'][2168].replace('대구','대구광역시')
+public['first'].replace('세종특별자치시시','세종특별자치시',inplace=True)
 
 # first -> location 컬럼명 변경
 public.rename(columns = {'first':'location'}, inplace=True)
@@ -134,11 +134,23 @@ for i in range(len(public)):
         info.append(sub_part[i].split(' ')[1])
 
 public.drop(['splits','split_2'], axis = 1, inplace = True)
+## 설명 컬럼 오타 및 내용 변경(설명-결괏/특수문자(‧),결핵요양시설(설명) - 정신건강--)
+public['explain'] = public['explain'].str.replace('결괏','결과')
+public['fname']=public['fname'].str.replace(pat=r'[‧]',repl=r'', regex=True)
+public['explain'] = public['explain'].str.replace(pat=r'[‧]',repl=r'', regex=True)
+for i in range(len(public)):
+    if public['fname'][i] == '결핵 요양시설 현황':
+        # public['explian'] = '경기도 내 결핵 요양 시설  현황입니다.'
+        public['explain'][i] = '경기도 내 결핵 요양 시설  현황입니다.'
+
+
 # 컬럼순서/ 컬럼명 변경
 public['form']
 
 public = public[['fname','provide','location','sub_loc','part','sub_dept','big','middle','small','tag','explain','type','form','date']]
-public.columns = ['제목', '제공기관','지역','하위지역','부서','하위부서','대분류','중분류','소분류','태그','설명','파일형태','제공형태','수정일자']
+public.columns = ['제목', '제공기관','지역','하위지역','부서','하위부서','대분류','중분류','소분류','태그','설명','파일형태','수정일자','제공형태']
 
-public.to_csv('C:/Users/BIOJEAN/Desktop/이용준/working.csv', encoding='utf-8')
+public.to_csv('C:/Users/BIOJEAN/Desktop/이용준/working.csv', encoding='utf-8-sig')
+public.tail
+
 
