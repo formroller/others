@@ -1,0 +1,81 @@
+# 건강검진 코드조회 (API)
+
+# =============================================================================
+# 국가건강검진기관정보 코드조회(API)
+# =============================================================================
+# (국가건강검진기관정보) 국민건강보험공단의 국가건강검진기관정보 서비스를 사용시 필요한 코드정보를 제공하는 서비스
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import urllib
+import urllib.request as myurl
+from urllib.request import Request, urlopen
+from urllib.parse import urlencode, quote_plus, unquote
+
+my_key = 'qNVnLrsetaz%2Fxgz4XeGJgpAsDFC1V918fFgBd7JsTpxtL%2FQhW0Ow1iffbmywToOWiowxzbVN91wENGMlcd3CdA%3D%3D'
+# 1. 시도주소 조회
+url_loc ='http://apis.data.go.kr/openapi/service/rest/CodeService/getSiDoList?serviceKey=qNVnLrsetaz%2Fxgz4XeGJgpAsDFC1V918fFgBd7JsTpxtL%2FQhW0Ow1iffbmywToOWiowxzbVN91wENGMlcd3CdA%3D%3D&stdt=20'
+
+data = urlopen(url_loc).read()
+soup = BeautifulSoup(data,'html.parser')
+items = soup.find_all('item')
+
+df = pd.DataFrame(columns = ['code','local'])
+
+i=0
+for item in items:
+    df.loc[i]=[item.text[:2],item.text[2:]]
+    i += 1
+
+# 2. 시군구 주소조회
+df2 = pd.DataFrame(columns = ['code','sub_code','sub_loc'])
+items=[]
+for i in df['code']:
+    sub_loc = f'http://openapi1.nhis.or.kr/openapi/service/rest/CodeService/getSiGunGuList?siDoCd={i}&ServiceKey='+my_key
+    
+    sub = urlopen(sub_loc).read()
+    soup2 = BeautifulSoup(sub,'html.parser')
+    item_bag = soup2.find_all('item')
+    items += item_bag
+    
+i=0
+for new_item in items:
+    df2.loc[i] = [new_item.text[:2], new_item.text[2:5], new_item.text[5:]]
+    i += 1
+
+# 3. 의료기관 조회
+dept_url = 'http://apis.data.go.kr/openapi/service/rest/CodeService/getMedicInstList?serviceKey=qNVnLrsetaz%2Fxgz4XeGJgpAsDFC1V918fFgBd7JsTpxtL%2FQhW0Ow1iffbmywToOWiowxzbVN91wENGMlcd3CdA%3D%3D&'
+
+data = urlopen(dept_url).read()
+soup = BeautifulSoup(data,'html.parser')
+dept = soup.find_all('item')
+
+df3 = pd.DataFrame(columns = ['code','local'])
+
+i=0
+for d in dept:
+    df3.loc[i]=[d.text[:1], d.text[1:]]
+    i += 1
+
+# 4. 검진종류 조회
+part = 'http://apis.data.go.kr/openapi/service/rest/CodeService/getHchTypeList?serviceKey=qNVnLrsetaz%2Fxgz4XeGJgpAsDFC1V918fFgBd7JsTpxtL%2FQhW0Ow1iffbmywToOWiowxzbVN91wENGMlcd3CdA%3D%3D&'
+
+data = urlopen(part).read()
+soup = BeautifulSoup(data,'html.parser')
+detail = soup.find_all('item')
+
+df4 = pd.DataFrame(columns = ['code','detail'])
+
+i=0
+for d in detail:
+    df4.loc[i]=[d.text[:1], d.text[1:]]
+    i += 1
+
+merge_df = pd.merge(df,df2,on='code')
+merge_df.to_csv('C:/Users/BIOJEAN/Desktop/이용준/검진데이터/파일/건강검진코드.csv', encoding='cp949')
+
+##
+merge_df : 지역명 코드 및 하위 지역, 하위지역 코드
+df3, df4 : 기관 및 기관코드 / 검진 내용
+# 참고
+# https://javan.tistory.com/2?category=785006
