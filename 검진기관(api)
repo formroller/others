@@ -1,0 +1,95 @@
+# API 호출하기1.
+
+# =============================================================================
+# 검진기관 찾기
+# =============================================================================
+# (국가건강검진기관정보) 국가건강검진기관을 검색할 수 있는 서비스
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import urllib
+import urllib.request as myurl
+from urllib.request import Request, urlopen
+from urllib.parse import urlencode, quote_plus, unquote
+import xml.etree.ElementTree as ET
+
+
+# (참조용) refer['code'] 지역코드
+refer = pd.read_csv('C:/Users/BIOJEAN/Desktop/이용준/건강검진/파일/건강검진코드.csv', encoding='cp949')
+
+## api url
+my_keys = 'qNVnLrsetaz%2Fxgz4XeGJgpAsDFC1V918fFgBd7JsTpxtL%2FQhW0Ow1iffbmywToOWiowxzbVN91wENGMlcd3CdA%3D%3D'
+url = f'http://openapi1.nhis.or.kr/openapi/service/rest/HmcSearchService/getRegnHmcList?&siDoCd={11}&ServiceKey='+my_keys
+
+# 1. 지역별 검진기관 안내
+refer[(refer['code']==11)]['sub_code']  # 서울 시군구 코드
+## sido==11(서울) 데이터 추출
+url = f'http://openapi1.nhis.or.kr/openapi/service/rest/HmcSearchService/getRegnHmcList?&siDoCd=11&s0&ServiceKey='+my_keys
+re = requests.get(url)
+
+root = ET.fromstring(re.text)
+test = [[i.tag, i.text] for i in root.iter()] # 모든 tag
+
+for i in sorted(set(refer['code'])):
+    url = f'http://openapi1.nhis.or.kr/openapi/service/rest/HmcSearchService/getRegnHmcList?&siDoCd=11&siGunGuCd=305&ServiceKey='+my_keys
+    re = requests.get(url)
+    
+    root = ET.fromstring(re.text)
+    seoul = [[i.tag, i.text] for i in root.iter()]
+# commit
+
+
+# a=[]   refer['code']값 하나씩 일일이 대입해 출력
+# for j in (refer[(refer['code']==11)]['sub_code']):# 110,140,170,200,215,230,260,290,305,320
+#     url = f'http://openapi1.nhis.or.kr/openapi/service/rest/HmcSearchService/getRegnHmcList?&siDoCd=11&siGunGuCd=110&ServiceKey='+my_keys
+#     re = requests.get(url)
+          
+#     root = ET.fromstring(re.text)
+#     a+=([[i.tag, i.text] for i in root.iter()] )
+c=[]
+for i in sorted(set(refer['code'])):
+    for j in (refer[(refer['code']==i)]['sub_code']):# 110,140,170,200,215,230,260,290,305,320
+        url = f'http://openapi1.nhis.or.kr/openapi/service/rest/HmcSearchService/getRegnHmcList?&siDoCd={i}&siGunGuCd={j}&ServiceKey='+my_keys
+        re = requests.get(url)
+          
+        root = ET.fromstring(re.text)
+        c+=[tuple([r.tag , r.text]) for r in root.iter()]
+    len(c)
+## commit
+
+# tag, value 분리
+tag=[]
+value=[]
+for i in c:
+    tag.append(i[0])
+    value.append(i[1])
+    
+## list to dict 방법1
+# creating a mesh of keys with empty values list 
+res = {key:[] for key in tag}
+# loop to iterate through keys and values 
+for key,val in zip(tag, value):
+    res[key].append(val)
+# printing result  
+
+## list to dict 방법2
+from collections import defaultdict
+a = defaultdict(list)
+[a[keys].append(vals) for keys, vals in zip(tag, value)]
+dict(a)
+##
+# pd.DataFrame.from_dict(res, orient='index'), 배열의 길이 다를 경우 NaN 채우는 방법
+df = pd.DataFrame.from_dict(res, orient='index').T
+df.drop(['OpenAPI_ServiceResponse','cmmMsgHeader'])
+df.drop(df.columns[0:13],axis=1, inplace = True)
+df.drop(df.columns[-3:], axis = 1,inplace = True)
+df.columns  ## 국민건강보험공단 참조 컬럼명 변경.
+
+
+# 2. 검진종류별 검진기관 안내
+# 3. 공휴일 검진기관 안내
+# 4. 검진기관 통합 조건 검색
+
+
+
